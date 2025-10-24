@@ -1,0 +1,284 @@
+/* Variáveis de marca */
+:root {
+  --brand-from: #0d6efd; /* azul */
+  --brand-to: #6610f2;   /* roxo */
+}
+
+/* Tabelas com rolagem */
+.scrollable-table { 
+  max-height: 150px; 
+  overflow-y: auto; 
+  border: 1px solid #dee2e6;
+  border-radius: 0.375rem;
+}
+
+/* Utilitários */
+.full-width-button { width: 100%; }
+.mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+
+/* Melhorias na legibilidade das tabelas */
+.table th, .table td { 
+  font-size: .9rem; 
+  padding: .4rem; 
+  border: 1px solid #dee2e6;
+}
+
+.table th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #495057;
+  text-align: center;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1);
+}
+
+.table tbody tr:nth-child(even) {
+  background-color: #f8f9fa;
+}
+
+.table tbody tr:hover {
+  background-color: #e9ecef;
+}
+
+.label-container { 
+  display: flex; 
+  align-items: center; 
+  gap: .5rem; 
+}
+
+/* Configuração específica para o gráfico de derivada */
+#derivative-chart { 
+  height: 300px !important; 
+  width: 100% !important;
+}
+
+.derivative-chart-container {
+  height: 300px;
+  position: relative;
+  border: 1px solid #dee2e6;
+  border-radius: 0.375rem;
+  background-color: #fff;
+}
+
+/* Melhorias nos títulos das seções */
+h5.text-center {
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e9ecef;
+}
+
+/* Melhorias nos controles */
+.form-control, .form-select {
+  font-size: 0.9rem;
+  border: 1px solid #ced4da;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+/* Status de conexão */
+#status {
+  font-weight: 600;
+}
+
+/* Melhorias nos botões */
+.btn {
+  font-weight: 500;
+  border-radius: 0.375rem;
+}
+
+/* Container principal */
+.container-fluid {
+  max-width: 1400px;
+}
+
+/* Brand row para logos */
+.brand-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  max-width: 800px;
+  margin: 0.5rem auto;
+  padding: 0.25rem;
+}
+
+.brand-row .logo {
+  width: 48px;
+  height: auto;
+}
+
+.brand-text {
+  flex: 1 1 auto;
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: inherit;
+}
+
+/* Modal de instruções */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.45);
+  z-index: 1050;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .18s ease-in-out;
+}
+
+.modal-overlay[aria-hidden="false"] { 
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-panel {
+  background: #fff;
+  color: #111;
+  width: clamp(320px, 60%, 760px);
+  max-height: 80vh;
+  overflow: auto;
+  border-radius: .5rem;
+  box-shadow: 0 12px 40px rgba(0,0,0,.35);
+  transform: translateY(8px) scale(.99);
+  transition: transform .18s ease-in-out;
+}
+
+.modal-overlay[aria-hidden="false"] .modal-panel {
+  transform: translateY(0) scale(1);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .5rem;
+  padding: .75rem 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+.modal-body {
+  padding: 1rem;
+}
+
+.modal-panel .btn[aria-label] {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+/* Splash / Brand hero */
+.brand-hero {
+  background: linear-gradient(135deg, var(--brand-from), var(--brand-to));
+  color: #fff;
+  padding: 28px 12px;
+  text-align: center;
+  border-radius: 0 0 18px 18px;
+  box-shadow: 0 6px 20px rgba(0,0,0,.15);
+}
+
+.brand-hero .logo {
+  width: 84px;
+  height: 84px;
+  border-radius: 20px;
+  box-shadow: 0 4px 14px rgba(0,0,0,.25);
+}
+
+.brand-hero h1 {
+  font-size: clamp(1.5rem, 2vw + 1rem, 2.2rem);
+  margin: .5rem 0 0 0;
+  font-weight: 800;
+}
+
+.brand-hero p {
+  margin: .25rem 0 .75rem;
+  opacity: .95;
+}
+
+.brand-switch {
+  display: inline-flex;
+  gap: .5rem;
+  align-items: center;
+  margin-bottom: .25rem;
+}
+
+.brand-switch label {
+  background: rgba(255,255,255,.15);
+  color: #fff;
+  padding: .25rem .5rem;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.brand-switch input {
+  display: none;
+}
+
+.brand-switch input:checked + label {
+  background: #fff;
+  color: #111;
+}
+
+.hero-pane[hidden] {
+  display: none !important;
+}
+
+.jump-btn {
+  border: 0;
+  border-radius: 999px;
+  padding: .6rem 1.2rem;
+  font-weight: 700;
+}
+
+/* Estilo para o grupo de intervalo */
+.interval-group {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.interval-input {
+  flex: 1;
+  min-width: 60px;
+}
+
+.interval-unit {
+  flex: 0 0 auto;
+  min-width: 60px;
+}
+
+.interval-warning {
+  font-size: 0.75rem;
+  color: #dc3545;
+  margin-top: 0.25rem;
+  font-weight: 500;
+}
+
+/* Melhorias nos gráficos */
+canvas {
+  border-radius: 0.375rem;
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsividade */
+@media (max-width: 480px) {
+  .brand-row {
+    gap: .5rem;
+    padding: .2rem;
+  }
+  .brand-row .logo {
+    width: 36px;
+  }
+  .brand-text {
+    font-size: 1rem;
+  }
+}
