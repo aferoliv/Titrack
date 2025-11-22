@@ -70,6 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
     derivativeChartCtx: $("#derivative-chart").getContext("2d"),
     realTimeTableHead: $("#real-time-table-head"),
     realTimeTableBody: $("#real-time-table-body"),
+    experimentTableHead: $("#experiment-table-head"),
     experimentTableBody: $("#experiment-table-body"),
     addExperimentDataButton: $("#add-experiment-data-button"),
     downloadRealTimeDataButton: $("#download-real-time-data-button"),
@@ -78,6 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
     maxPointsInput: $("#max-points"),
     yMinInput: $("#rt-y-min"),        // Versão 2
     yMaxInput: $("#rt-y-max"),        // Versão 2
+    autoYScale: $("#auto-y-scale"),   // Auto escala Y
     rtFieldSelect: $("#rt-field-select"), // Versão 2
     volumeInput: $("#volume"),
     clearDataButton: $("#clear-data-button"),
@@ -87,12 +89,226 @@ document.addEventListener("DOMContentLoaded", () => {
     profileActions: $("#profile-actions"),
     saveDefault: $("#save-default"),
     supportWarning: $("#support-warning"),
+    languageSelect: $("#languageSelect"), // Internacionalização
     // Auto-export (Versão 2)
     autoexportStatus: $("#autoexport-status"),
     btnAutoFolder: $("#btn-autoexport-folder"),
     btnAutoDisable: $("#btn-autoexport-disable"),
     btnExportNow: $("#btn-export-now"),
   };
+
+  // ===== Sistema de Internacionalização =====
+  const translations = {
+    pt: {
+      // Cabeçalho
+      dataAcquisition: "Aquisição de Dados de Instrumentos",
+      language: "Idioma",
+      portuguese: "Português",
+      english: "English",
+      
+      // Auto-export
+      autoExport: "Auto-export: Off",
+      autoExportFolder: "Auto-export folder…",
+      disable: "Desabilitar",
+      exportNow: "Exportar agora",
+      instructions: "Instruções",
+      
+      // Conexão
+      connection: "Conexão",
+      instrument: "Instrumento",
+      interval: "Intervalo",
+      milliseconds: "ms",
+      seconds: "s",
+      minutes: "min",
+      hours: "h",
+      
+      // Botões e status
+      connect: "Conectar",
+      disconnect: "Desconectar",
+      connected: "Conectado",
+      disconnected: "Desconectado",
+      
+      // Seções principais
+      realTimeReading: "Leitura em Tempo Real",
+      titration: "Titulação",
+      derivative: "Derivada",
+      
+      // Tabelas
+      time: "Hora",
+      reading: "Leitura",
+      volume: "Volume (µL)",
+      
+      // Botões de ação
+      start: "Start",
+      add: "Add",
+      clearData: "Limpar dados",
+      
+      // Downloads
+      downloadRealTime: "Download – Tempo Real (CSV)",
+      downloadTitration: "Download – Titulação (CSV)",
+      downloadDerivative: "Download – Derivada (CSV)",
+      
+      // Gráficos
+      pointsInChart: "Pontos no gráfico",
+      yMin: "Y min",
+      yMax: "Y max",
+      autoScale: "Auto Y",
+      channel: "Canal (Real-time)",
+      additionVolume: "Volume de adição /µL"
+    },
+    
+    en: {
+      // Header
+      dataAcquisition: "Instrument Data Acquisition",
+      language: "Language",
+      portuguese: "Português",
+      english: "English",
+      
+      // Auto-export
+      autoExport: "Auto-export: Off",
+      autoExportFolder: "Auto-export folder…",
+      disable: "Disable",
+      exportNow: "Export now",
+      instructions: "Instructions",
+      
+      // Connection
+      connection: "Connection",
+      instrument: "Instrument",
+      interval: "Interval",
+      milliseconds: "ms",
+      seconds: "s",
+      minutes: "min",
+      hours: "h",
+      
+      // Buttons and status
+      connect: "Connect",
+      disconnect: "Disconnect",
+      connected: "Connected",
+      disconnected: "Disconnected",
+      
+      // Main sections
+      realTimeReading: "Real-time Reading",
+      titration: "Titration",
+      derivative: "Derivative",
+      
+      // Tables
+      time: "Time",
+      reading: "Reading",
+      volume: "Volume (µL)",
+      
+      // Action buttons
+      start: "Start",
+      add: "Add",
+      clearData: "Clear data",
+      
+      // Downloads
+      downloadRealTime: "Download – Real-time (CSV)",
+      downloadTitration: "Download – Titration (CSV)",
+      downloadDerivative: "Download – Derivative (CSV)",
+      
+      // Charts
+      pointsInChart: "Points in chart",
+      yMin: "Y min",
+      yMax: "Y max",
+      autoScale: "Auto Y",
+      channel: "Channel (Real-time)",
+      additionVolume: "Addition volume /µL"
+    }
+  };
+
+  let currentLanguage = localStorage.getItem('app-language') || 'pt';
+
+  function applyTranslations(lang) {
+    currentLanguage = lang;
+    localStorage.setItem('app-language', lang);
+    
+    // Atualiza todos os elementos com data-i18n
+    document.querySelectorAll('[data-i18n]').forEach(element => {
+      const key = element.getAttribute('data-i18n');
+      if (translations[lang] && translations[lang][key]) {
+        element.textContent = translations[lang][key];
+      }
+    });
+    
+    // Atualiza elementos específicos que não usam data-i18n
+    updateDynamicLabels(lang);
+    
+    // Atualiza o seletor de idioma
+    if (els.languageSelect) {
+      els.languageSelect.value = lang;
+    }
+    
+    // Atualiza o lang do HTML
+    document.documentElement.lang = lang === 'pt' ? 'pt-BR' : 'en-US';
+  }
+
+  function updateDynamicLabels(lang) {
+    // Atualiza botão conectar/desconectar
+    if (els.toggleButton) {
+      const isConnected = els.toggleButton.textContent.includes('Desconectar') || els.toggleButton.textContent.includes('Disconnect');
+      els.toggleButton.textContent = isConnected ? translations[lang].disconnect : translations[lang].connect;
+    }
+    
+    // Atualiza status de conexão
+    if (els.status) {
+      const currentStatus = els.status.textContent;
+      if (currentStatus.includes('Conectado') || currentStatus.includes('Connected')) {
+        els.status.textContent = translations[lang].connected;
+      } else if (currentStatus.includes('Desconectado') || currentStatus.includes('Disconnected')) {
+        els.status.textContent = translations[lang].disconnected;
+      }
+    }
+    
+    // Atualiza botão Start/Add
+    if (els.addExperimentDataButton) {
+      const currentText = els.addExperimentDataButton.textContent;
+      if (currentText === 'Start') {
+        els.addExperimentDataButton.textContent = translations[lang].start;
+      } else if (currentText === 'Add') {
+        els.addExperimentDataButton.textContent = translations[lang].add;
+      }
+    }
+    
+    // Atualiza labels dos botões de download
+    if (els.downloadRealTimeDataButton) {
+      els.downloadRealTimeDataButton.textContent = translations[lang].downloadRealTime;
+    }
+    if (els.downloadExperimentDataButton) {
+      els.downloadExperimentDataButton.textContent = translations[lang].downloadTitration;
+    }
+    if (els.downloadDerivativeDataButton) {
+      els.downloadDerivativeDataButton.textContent = translations[lang].downloadDerivative;
+    }
+    
+    // Atualiza labels dos campos
+    const pointsLabel = document.querySelector('label[for="max-points"]');
+    if (pointsLabel) pointsLabel.textContent = translations[lang].pointsInChart;
+    
+    const yMinLabel = document.querySelector('label[for="rt-y-min"]');
+    if (yMinLabel) yMinLabel.textContent = translations[lang].yMin;
+    
+    const yMaxLabel = document.querySelector('label[for="rt-y-max"]');
+    if (yMaxLabel) yMaxLabel.textContent = translations[lang].yMax;
+    
+    const channelLabel = document.querySelector('label[for="rt-field-select"]');
+    if (channelLabel) channelLabel.textContent = translations[lang].channel;
+    
+    const volumeLabel = document.querySelector('label[for="volume"]');
+    if (volumeLabel) volumeLabel.textContent = translations[lang].additionVolume;
+    
+    const clearBtn = document.getElementById('clear-data-button');
+    if (clearBtn) clearBtn.textContent = translations[lang].clearData;
+    
+    // Atualiza títulos das seções
+    const rtTitle = document.querySelector('.col-md-5 h5');
+    if (rtTitle) rtTitle.textContent = translations[lang].realTimeReading;
+    
+    const titTitle = document.querySelector('.col-md-4 h5');
+    if (titTitle) titTitle.textContent = translations[lang].titration;
+    
+    const derTitle = document.querySelector('.col-md-3 h5');
+    if (derTitle) derTitle.textContent = translations[lang].derivative;
+  }
 
   // ===== Estado =====
   let port, reader, readTimer, updateTimer;
@@ -157,8 +373,9 @@ document.addEventListener("DOMContentLoaded", () => {
       if (rtField && els.rtFieldSelect.querySelector(`option[value="${rtField}"]`)) els.rtFieldSelect.value = rtField;
       
       renderRTHeaders();
+      renderExperimentHeaders();
       renderTable(els.realTimeTableBody, rt, getRTHeaders());
-      renderTable(els.experimentTableBody, tit, ["time","read","volume","pH","temperature"]);
+      renderTable(els.experimentTableBody, tit, getExperimentHeaders());
       
       if (charts.rt) {
         charts.rt.data.datasets[0].data = rt.map(d=>({x:d.read,y:d[rtField]})).filter(p=>p.y !== undefined);
@@ -167,7 +384,8 @@ document.addEventListener("DOMContentLoaded", () => {
         charts.rt.update();
       }
       if (charts.tit){ 
-        charts.tit.data.datasets[0].data = tit.map(r=>({x:r.volume,y:r.pH})); 
+        const primaryField = getPrimaryField();
+        charts.tit.data.datasets[0].data = tit.map(r=>({x:r.volume,y:r[primaryField]})); 
         charts.tit.update(); 
       }
       if (charts.der){ 
@@ -286,7 +504,7 @@ document.addEventListener("DOMContentLoaded", () => {
         await writeTextFile(fs.dirHandle, `${prefix}_real_time_${ts}.csv`, csvFromRows(rt,getRTHeaders())); 
       }
       if (tit.length){ 
-        await writeTextFile(fs.dirHandle, `${prefix}_titration_${ts}.csv`, csvFromRows(tit,["time","read","volume","pH","temperature"])); 
+        await writeTextFile(fs.dirHandle, `${prefix}_titration_${ts}.csv`, csvFromRows(tit,getExperimentHeaders())); 
       }
       if (der.length){ 
         await writeTextFile(fs.dirHandle, `${prefix}_derivative_${ts}.csv`, csvFromRows(der,["averageVolume","derivativeValue"])); 
@@ -302,7 +520,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function exportAllDownloads(prefix){
     const ts = stamp();
     if (rt.length) downloadCSV(rt, `${prefix}_real_time_${ts}.csv`, getRTHeaders());
-    if (tit.length) downloadCSV(tit, `${prefix}_titration_${ts}.csv`, ["time","read","volume","pH","temperature"]);
+    if (tit.length) downloadCSV(tit, `${prefix}_titration_${ts}.csv`, getExperimentHeaders());
     if (der.length) downloadCSV(der, `${prefix}_derivative_${ts}.csv`, ["averageVolume","derivativeValue"]);
     console.log("📥 DOWNLOAD DE ARQUIVOS CONCLUÍDO:", prefix); // Logging (V1)
   }
@@ -311,7 +529,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // ===== Perfis (combinado das duas versões) =====
   const DEFAULT_PROFILES = [
     {
-      name: " – LUCA210 – Escala pH",
+      name: " – Tipo M210 – Escala pH",
       serial: { baudRate: 9600, dataBits: 8, stopBits: 1, parity: "none" },
       parser: { delimiter: ",", lineTerminator: "\r", fields: ["pH", "temperature"], map: { pH: 0, temperature: 1 },
                 validation: { pH: { min: 0, max: 14 } } },
@@ -319,7 +537,7 @@ document.addEventListener("DOMContentLoaded", () => {
       timing: { minInterval: 2000 } // 2 segundo mínimo (V1)
     },
     {
-      name: " – LUCA210 – Escala Diferença Potencial Elétrico",
+      name: " – Tipo M210 – Escala Diferença Potencial Elétrico",
       serial: { baudRate: 9600, dataBits: 8, stopBits: 1, parity: "none" },
       parser: { delimiter: ",", lineTerminator: "\r", fields: ["potencial", "temperature"], map: { potencial: 0, temperature: 1 } },
       units: { potencial: "mV", temperature: "°C" },
@@ -336,15 +554,15 @@ document.addEventListener("DOMContentLoaded", () => {
       name: "pH 450C",
       serial: { baudRate: 115200, dataBits: 8, stopBits: 1, parity: "none" },
       parser: { delimiter: ";", lineTerminator: "\r\n", fields: ["pH", "temperature"], map: { pH: 0, temperature: 1 } },
-      units: { pH: "", temperature: "°C" },
-      timing: { minInterval: 200 } // 0.2 segundos mínimo (V1)
+      units: { signal:"bit", temperature: "°C" },
+      timing: { minInterval: 20 } // 20 milisegundos mínimo (V1)
     },
     {
       name: "ADS_continuous – Arduino",
       serial: { baudRate: 9600, dataBits: 8, stopBits: 1, parity: "none" },
       parser: { delimiter: ";", lineTerminator: "\n", fields: ["pH"], map: { pH: 0 } },
       units: { pH: "" },
-      timing: { minInterval: 100 } // 0.1 segundos mínimo (V1)
+      timing: { minInterval: 20 } // 20 milisegundos mínimo (V1)
     },
     {
       name: "AS7341 – FIA",
@@ -353,6 +571,31 @@ document.addEventListener("DOMContentLoaded", () => {
       },
       units: {"pH": "a.u." },
       timing: { minInterval: 50 } // 0.05 segundos mínimo (V1)
+    },
+    {
+      name: "Titulação Fotométrica: AS7341 - ",
+      serial: { baudRate: 115200, dataBits: 8, stopBits: 1, parity: "none" },
+      parser: { 
+        delimiter: ",", 
+        lineTerminator: "\n", 
+        fields: ["ms", "F1_415", "F2_445", "F3_480", "F4_515", "F5_555", "F6_590", "F7_630", "F8_680", "CLEAR", "NIR"], 
+        map: { 
+          "ms": 0, "F1_415": 1, "F2_445": 2, "F3_480": 3, "F4_515": 4, 
+          "F5_555": 5, "F6_590": 6, "F7_630": 7, "F8_680": 8, "CLEAR": 9, "NIR": 10 
+        },
+        validation: { 
+          "ms": { min: 0 },
+          "F1_415": { min: 0 }, "F2_445": { min: 0 }, "F3_480": { min: 0 }, "F4_515": { min: 0 },
+          "F5_555": { min: 0 }, "F6_590": { min: 0 }, "F7_630": { min: 0 }, "F8_680": { min: 0 },
+          "CLEAR": { min: 0 }, "NIR": { min: 0 }
+        }
+      },
+      units: { 
+        "ms": "ms", "F1_415": "counts", "F2_445": "counts", "F3_480": "counts", "F4_515": "counts",
+        "F5_555": "counts", "F6_590": "counts", "F7_630": "counts", "F8_680": "counts", 
+        "CLEAR": "counts", "NIR": "counts" 
+      },
+      timing: { minInterval: 10 } // tempo mínimo de coleta
     }
   ];
 
@@ -512,9 +755,44 @@ document.addEventListener("DOMContentLoaded", () => {
     els.realTimeTableHead.innerHTML = `<tr>${cols.map(c => `<th>${c === 'time' ? 'Hora' : (c === 'read' ? 'Leitura' : c)}</th>`).join('')}</tr>`;
   }
   
+  function renderExperimentHeaders(){
+    const fields = getRTFields();
+    
+    let headers = ['<th>Hora</th>', '<th>Leitura</th>', '<th>Volume (µL)</th>'];
+    
+    // Adiciona TODOS os campos do perfil atual com suas unidades
+    if (fields && fields.length > 0) {
+      fields.forEach(field => {
+        const unit = (currentProfile?.units && currentProfile.units[field]) ? ` (${currentProfile.units[field]})` : "";
+        headers.push(`<th>${field}${unit}</th>`);
+      });
+    }
+    
+    els.experimentTableHead.innerHTML = `<tr>${headers.join('')}</tr>`;
+  }
+  
+  function getExperimentHeaders(){
+    const fields = getRTFields();
+    
+    // Incluir todos os canais disponíveis na tabela de titulação
+    let headers = ["time", "read", "volume"];
+    
+    // Adicionar todos os campos do perfil atual
+    if (fields && fields.length > 0) {
+      headers = headers.concat(fields);
+    }
+    
+    return headers;
+  }
+  
+  function getPrimaryField(){
+    const fields = getRTFields();
+    return fields.includes("pH") ? "pH" : fields[0];
+  }
+  
   function getRTHeaders(){ return ["time","read", ...getRTFields()]; }
   
-  function updateProfileUI(profile, fallbackFields = null){
+    function updateProfileUI(profile, fallbackFields = null){
     const fields = profile?.parser?.fields?.length ? profile.parser.fields : (fallbackFields || getRTFields());
     els.rtFieldSelect.innerHTML = "";
     fields.forEach((f)=>{
@@ -522,7 +800,13 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     if (rtField && fields.includes(rtField)) els.rtFieldSelect.value = rtField;
     else { rtField = fields.includes("pH") ? "pH" : fields[0]; els.rtFieldSelect.value = rtField; }
-    renderRTHeaders(); applyYAxisLabel();
+    
+    // Atualiza todos os cabeçalhos e labels
+    renderRTHeaders(); 
+    renderExperimentHeaders();
+    applyYAxisLabel();
+    updateTitrationChartLabel();
+    updateDerivativeChartLabel();
   }
   
   function applyProfileUIFromSelect(){
@@ -532,18 +816,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ===== Y limits (da Versão 2) =====
   function handleYLimitChange(){
-    const minVal = els.yMinInput.value.trim();
-    const maxVal = els.yMaxInput.value.trim();
-    const minNum = minVal === "" ? null : Number(minVal);
-    const maxNum = maxVal === "" ? null : Number(maxVal);
-    const minValid = (minNum === null) || (!Number.isNaN(minNum));
-    const maxValid = (maxNum === null) || (!Number.isNaN(maxNum));
-    const orderValid = (minNum === null || maxNum === null) || (minNum < maxNum);
-    els.yMinInput.classList.toggle("is-invalid", !minValid || !orderValid);
-    els.yMaxInput.classList.toggle("is-invalid", !maxValid || !orderValid);
-    if (minValid && maxValid && orderValid){
-      rtYMin = minNum; rtYMax = maxNum; applyYAxisLimits(); if (charts.rt) charts.rt.update(); persistSession("rtYLimitsChange");
+    const isAutoScale = els.autoYScale.checked;
+    
+    if (isAutoScale) {
+      els.yMinInput.disabled = true;
+      els.yMaxInput.disabled = true;
+      rtYMin = null; rtYMax = null;
+    } else {
+      els.yMinInput.disabled = false;
+      els.yMaxInput.disabled = false;
+      
+      const minVal = els.yMinInput.value.trim();
+      const maxVal = els.yMaxInput.value.trim();
+      const minNum = minVal === "" ? null : Number(minVal);
+      const maxNum = maxVal === "" ? null : Number(maxVal);
+      const minValid = (minNum === null) || (!Number.isNaN(minNum));
+      const maxValid = (maxNum === null) || (!Number.isNaN(maxNum));
+      const orderValid = (minNum === null || maxNum === null) || (minNum < maxNum);
+      els.yMinInput.classList.toggle("is-invalid", !minValid || !orderValid);
+      els.yMaxInput.classList.toggle("is-invalid", !maxValid || !orderValid);
+      if (minValid && maxValid && orderValid){
+        rtYMin = minNum; rtYMax = maxNum;
+      }
     }
+    
+    applyYAxisLimits(); 
+    if (charts.rt) charts.rt.update(); 
+    persistSession("rtYLimitsChange");
   }
   
   function applyYAxisLimits(){
@@ -557,10 +856,31 @@ document.addEventListener("DOMContentLoaded", () => {
     const unit = (currentProfile?.units && currentProfile.units[rtField]) ? ` (${currentProfile.units[rtField]})` : "";
     charts.rt.options.scales.y.title.text = `${rtField}${unit}`;
   }
+  
+  function updateTitrationChartLabel(){
+    if (!charts.tit) return;
+    const selectedField = rtField || getPrimaryField();
+    const unit = (currentProfile?.units && currentProfile.units[selectedField]) ? ` (${currentProfile.units[selectedField]})` : "";
+    charts.tit.options.scales.y.title.text = `${selectedField}${unit}`;
+    charts.tit.update('none');
+  }
+  
+  function updateDerivativeChartLabel(){
+    if (!charts.der) return;
+    const selectedField = rtField || getPrimaryField();
+    const unit = (currentProfile?.units && currentProfile.units[selectedField]) ? ` (${currentProfile.units[selectedField]})` : "";
+    charts.der.options.scales.y.title.text = `d${selectedField}/dV${unit ? ` (${unit}/µL)` : ' ×10³'}`;
+    charts.der.update('none');
+  }
 
   // ===== Eventos =====
   els.toggleButton.addEventListener("click", async () => {
     if (connected) await disconnect(); else await connect();
+  });
+  
+  // Evento para mudança de idioma
+  els.languageSelect.addEventListener("change", (e) => {
+    applyTranslations(e.target.value);
   });
   
   // Eventos para validação de intervalo (V1)
@@ -574,12 +894,32 @@ document.addEventListener("DOMContentLoaded", () => {
   els.maxPointsInput.addEventListener("change", () => { updateRTChart(); persistSession("maxPointsChange"); });
   els.yMinInput.addEventListener("change", handleYLimitChange); // V2
   els.yMaxInput.addEventListener("change", handleYLimitChange); // V2
-  els.rtFieldSelect.addEventListener("change", () => { rtField = els.rtFieldSelect.value || rtField; updateRTChart(true); persistSession("rtFieldChange"); }); // V2
+  els.autoYScale.addEventListener("change", handleYLimitChange); // Auto escala
+  els.rtFieldSelect.addEventListener("change", () => { 
+    rtField = els.rtFieldSelect.value || rtField; 
+    updateRTChart(true); 
+    updateTitrationChartLabel(); 
+    updateDerivativeChartLabel(); 
+    persistSession("rtFieldChange"); 
+  }); // V2
   els.addExperimentDataButton.addEventListener("click", () => { addTitPoint(); persistSession("titAdd"); });
   els.downloadRealTimeDataButton.addEventListener("click", () => downloadCSV(rt, "real_time.csv", getRTHeaders()));
-  els.downloadExperimentDataButton.addEventListener("click", () => downloadCSV(tit, "titration.csv", ["time","read","volume","pH","temperature"]));
+  els.downloadExperimentDataButton.addEventListener("click", () => downloadCSV(tit, "titration.csv", getExperimentHeaders()));
   els.downloadDerivativeDataButton.addEventListener("click", () => downloadCSV(der, "derivative.csv", ["averageVolume","derivativeValue"]));
-  els.clearDataButton.addEventListener("click", () => { clearAllData(); persistSession("clear"); });
+  els.clearDataButton.addEventListener("click", () => { 
+    const hasData = rt.length > 0 || tit.length > 0 || der.length > 0;
+    
+    if (hasData) {
+      const confirmed = confirm("⚠️ Tem certeza que deseja limpar todos os dados?\n\nEsta ação removerá:\n• Dados de tempo real (" + rt.length + " pontos)\n• Dados de titulação (" + tit.length + " pontos)\n• Dados de derivada (" + der.length + " pontos)\n\nEsta ação não pode ser desfeita.");
+      if (!confirmed) return;
+    } else {
+      alert("ℹ️ Não há dados para limpar.");
+      return;
+    }
+    
+    clearAllData(); 
+    persistSession("clear"); 
+  });
   document.addEventListener("keydown", (ev) => { if (ev.ctrlKey && ev.code === "Space") { ev.preventDefault(); addTitPoint(); persistSession("titHotkey"); } });
 
   // Auto-export UI (V2)
@@ -653,6 +993,7 @@ document.addEventListener("DOMContentLoaded", () => {
   restoreExportFolder();
   restoreSession();
   validateInterval(); // Validação inicial (V1)
+  applyTranslations(currentLanguage); // Aplicar idioma salvo ou padrão
 
 
   // ===== Conexão (combinado das duas versões) =====
@@ -706,13 +1047,21 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   
   function toggleButton(isConn) {
-    els.toggleButton.textContent = isConn ? "Desconectar" : "Conectar";
+    els.toggleButton.textContent = isConn ? translations[currentLanguage].disconnect : translations[currentLanguage].connect;
     els.toggleButton.classList.toggle("btn-warning", isConn);
     els.toggleButton.classList.toggle("btn-success", !isConn);
   }
   
   function setStatus(text, info) {
-    els.status.textContent = text;
+    // Traduz automaticamente status conhecidos
+    let translatedText = text;
+    if (text === "Conectado" || text === "Connected") {
+      translatedText = translations[currentLanguage].connected;
+    } else if (text === "Desconectado" || text === "Disconnected") {
+      translatedText = translations[currentLanguage].disconnected;
+    }
+    
+    els.status.textContent = translatedText;
     if (info) els.portInfo.textContent = `usbVendor=${info.usbVendorId ?? '-'}, usbProduct=${info.usbProductId ?? '-'}`;
     else els.portInfo.textContent = '–';
   }
@@ -848,7 +1197,6 @@ document.addEventListener("DOMContentLoaded", () => {
     renderTable(els.realTimeTableBody, rt, getRTHeaders());
     updateRTChart();
     toggleDownloads();
-    els.clearDataButton.disabled = rt.length === 0 && tit.length === 0 && der.length === 0;
   }
   
   function updateRTChart(forceRescale=false) {
@@ -868,14 +1216,18 @@ document.addEventListener("DOMContentLoaded", () => {
     let row;
     if (tit.length === 0) {
       row = { ...last, ...nowFmt(), read: ++titCount, volume: 0 };
-      els.addExperimentDataButton.textContent = "Add";
+      els.addExperimentDataButton.textContent = translations[currentLanguage].add;
     } else {
       volumeSum += volStep;
       row = { ...last, ...nowFmt(), read: ++titCount, volume: volumeSum };
     }
     tit.push(row);
-    renderTable(els.experimentTableBody, tit, ["time","read","volume","pH","temperature"]);
-    if (charts.tit) { charts.tit.data.datasets[0].data = tit.map((r) => ({ x: r.volume, y: r.pH })); charts.tit.update(); }
+    renderTable(els.experimentTableBody, tit, getExperimentHeaders());
+    if (charts.tit) { 
+      const selectedField = rtField || getPrimaryField();
+      charts.tit.data.datasets[0].data = tit.map((r) => ({ x: r.volume, y: r[selectedField] })); 
+      charts.tit.update(); 
+    }
     updateDerivative();
     beep(); // V1
     toggleDownloads();
@@ -886,11 +1238,13 @@ document.addEventListener("DOMContentLoaded", () => {
   
   function updateDerivative() {
     der = [];
+    const selectedField = rtField || getPrimaryField();
+    
     for (let i = 1; i < tit.length; i++) {
       const v1 = tit[i - 1].volume, v2 = tit[i].volume;
-      const y1 = tit[i - 1].pH,     y2 = tit[i].pH;
+      const y1 = tit[i - 1][selectedField], y2 = tit[i][selectedField];
       const dv = v2 - v1;
-      if (dv === 0) continue;
+      if (dv === 0 || y1 === undefined || y2 === undefined) continue;
       const avgV = (v1 + v2) / 2;
       const dYdV = ((y2 - y1) / dv) * 1000; // ×10^3 (V1)
       der.push({ averageVolume: Number(avgV.toFixed(1)), derivativeValue: Number(dYdV.toFixed(2)) });
@@ -920,7 +1274,6 @@ document.addEventListener("DOMContentLoaded", () => {
     renderTable(els.experimentTableBody, tit, []);
     [charts.rt, charts.tit, charts.der].forEach((c) => { if (!c) return; c.data.datasets[0].data = []; c.update(); });
     toggleDownloads();
-    els.clearDataButton.disabled = true;
     console.log("🗑️ DADOS LIMPOS"); // V1
   }
 

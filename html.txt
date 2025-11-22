@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TiTrack — Plataforma para Interfaceamento de Titulação</title>
+    <link rel="icon" type="image/svg+xml" href="serialpha.svg" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+    <link href="styles.css" rel="stylesheet" />
+  </head>
+  <body class="p-2">
+    <!-- Splash / Branding -->
+    <section id="brand-hero" class="brand-hero">      
+      <div id="hero-serialpha" class="hero-pane">
+        <div class="brand-row">
+          <img src="logo-UFV.svg" alt="Logo UFV" class="logo">
+          <div class="brand-text">
+            <h1>TiTrack</h1>
+            <p>Plataforma para Interfaceamento de Titulação - V1.5</p>
+          </div>
+          <img src="Logo-Laqua.svg" alt="Logo LaQuA" class="logo">
+        </div>
+      </div>
+    </section>
+
+    <main id="app-root" class="container-fluid mt-3">
+      <!-- ✅ MUDANÇA 1: Header com logos e título centralizado -->
+      <header class="mb-3">
+        <div class="row align-items-center">
+          <!-- Logo UFV -->
+          <div class="col-2 text-center">
+            <img src="logo-UFV.svg" alt="Universidade Federal de Viçosa" class="img-fluid" style="max-height: 120px;" />
+          </div>
+          
+          <!-- Título central -->
+          <div class="col-8 text-center">
+            <h2 class="fw-bold mb-1">TiTrack</h2>
+            <h5 class="text-muted">Plataforma para Interfaceamento<br />de Titulação</h5>
+          </div>
+          
+          <!-- Logo LaQuA -->
+          <div class="col-2 text-center">
+            <img src="Logo-Laqua.svg" alt="LaQuA" class="img-fluid" style="max-height: 120px;" />
+          </div>
+        </div>
+      </header>
+
+      <!-- ✅ MUDANÇA 2: Barra azul com idioma -->
+      <div class="text-bg-primary py-2 px-3 mb-3 rounded d-flex justify-content-between align-items-center">
+        <h4 class="mb-0" data-i18n="dataAcquisition">Aquisição de Dados de Instrumentos</h4>
+        <div class="d-flex gap-2 align-items-center">
+          <span class="badge bg-light text-dark" data-i18n="language">Idioma:</span>
+          <select id="languageSelect" class="form-select form-select-sm" style="width: auto;">
+            <option value="pt" data-i18n="portuguese">Português</option>
+            <option value="en" data-i18n="english">English</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- ✅ MUDANÇA 3: Auto-export + Porta + Botões centralizados -->
+      <div class="row mb-3 g-2 align-items-center">
+        <!-- Auto-export status + porta + perfil -->
+        <div class="col-md-3">
+          <div class="d-flex flex-column gap-1">
+            <div class="d-flex align-items-center gap-2">
+              <span id="autoexport-status" class="badge bg-secondary" data-i18n="autoExport">Auto-export: Off</span>
+            </div>
+            <div class="text-muted small">
+              Porta: <span id="port-info">—</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Botões de ação centralizados -->
+        <div class="col-md-6 text-center">
+          <div class="btn-group" role="group">
+            <button id="btn-autoexport-folder" class="btn btn-outline-primary btn-sm" data-i18n="autoExportFolder">
+              Auto-export folder...
+            </button>
+            <button id="btn-autoexport-disable" class="btn btn-outline-secondary btn-sm" disabled data-i18n="disable">
+              Disable
+            </button>
+            <button id="btn-export-now" class="btn btn-outline-success btn-sm" data-i18n="exportNow">
+              Export now
+            </button>
+            <button id="toggle-instructions" class="btn btn-outline-info btn-sm" data-i18n="instructions">
+              Instructions
+            </button>
+          </div>
+        </div>
+
+        <!-- Espaço vazio -->
+        <div class="col-md-3"></div>
+      </div>
+
+      <!-- ✅ MUDANÇA 4: Seção Conexão reorganizada -->
+      <section class="mb-4">
+        <h3 class="text-center mb-3" data-i18n="connection">Conexão</h3>
+        <form id="connection-form">
+          <div class="row g-3 align-items-end mb-3">
+            <!-- Instrumento -->
+            <div class="col-md-3">
+              <label for="instrument" class="form-label" data-i18n="instrument">Instrumento</label>
+              <select id="instrument" class="form-select" aria-label="Instrumento"></select>
+            </div>
+
+            <!-- ✅ MUDANÇA 5: Intervalo com "ms" + proporções ajustadas -->
+            <div class="col-md-3">
+              <label for="read-interval-value" class="form-label" data-i18n="interval">Intervalo</label>
+              <div class="input-group">
+                <input type="number" id="read-interval-value" class="form-control" value="2" min="0.1" step="0.1" style="flex: 2;" />
+                <select id="read-interval-unit" class="form-select" style="flex: 1; min-width: 70px;">
+                  <option value="ms" data-i18n="milliseconds">ms</option>
+                  <option value="s" selected data-i18n="seconds">s</option>
+                  <option value="min" data-i18n="minutes">min</option>
+                  <option value="h" data-i18n="hours">h</option>
+                </select>
+              </div>
+              <small id="interval-warning" class="text-warning d-block mt-1" style="display: none !important;"></small>
+            </div>
+
+            <!-- Checkbox padrão -->
+            <div class="col-md-2">
+              <div class="form-check mt-4">
+                <input class="form-check-input" type="checkbox" id="save-default" />
+                <label class="form-check-label" for="save-default">Usar como padrão</label>
+              </div>
+            </div>
+
+            <!-- Botão Conectar/Desconectar -->
+            <div class="col-md-3">
+              <button type="button" id="toggle-button" class="btn btn-success w-100 btn-lg">
+                <span id="toggle-button-text">Conectar</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Perfis -->
+          <div class="row g-3 align-items-end mb-3">
+            <div class="col-md-5">
+              <label for="profile-actions" class="form-label">Perfis</label>
+              <select id="profile-actions" class="form-select">
+                <option value="">Ações de perfil…</option>
+                <option value="import">Importar (.json)…</option>
+                <option value="export">Exportar perfis</option>
+              </select>
+            </div>
+            <input id="profile-file" class="form-control d-none" type="file" accept="application/json" />
+          </div>
+
+          <!-- Status -->
+          <div class="row">
+            <div class="col-12">
+              <div class="alert alert-secondary py-2 mb-0">
+                <div class="alert alert-secondary py-2 small" id="support-warning" hidden>
+                  O Web Serial não é suportado neste navegador. Utilize Chrome/Edge no desktop.
+                </div>
+                <div><strong>Status:</strong> <span id="status">Desconectado</span></div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </section>
+
+      <!-- Gráficos e tabelas -->
+      <div class="row mb-2 g-2">
+        <div class="col-md-5">
+          <h5 class="text-center">Leitura em Tempo Real</h5>
+          <canvas id="real-time-chart"></canvas>
+          <div class="row g-2 mb-2 align-items-center mt-1">
+            <div class="col-md-4">
+              <div class="label-container">
+                <label for="max-points" class="form-label mb-0">Pontos no gráfico</label>
+                <input type="number" id="max-points" class="form-control" value="50" min="1" />
+              </div>
+            </div>
+            <!-- Controles de eixo Y (da Versão 2) -->
+            <div class="col-md-3">
+              <div class="label-container">
+                <label for="rt-y-min" class="form-label mb-0">Y min</label>
+                <input type="number" step="any" id="rt-y-min" class="form-control" placeholder="auto" />
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="label-container">
+                <label for="rt-y-max" class="form-label mb-0">Y max</label>
+                <input type="number" step="any" id="rt-y-max" class="form-control" placeholder="auto" />
+              </div>
+            </div>
+            <div class="col-md-2">
+              <button type="button" id="clear-data-button" class="btn btn-danger full-width-button" disabled>Limpar dados</button>
+            </div>
+          </div>
+
+          <!-- Seletor de canal (da Versão 2) -->
+          <div class="row g-2 mb-2 align-items-center">
+            <div class="col-md-6">
+              <div class="label-container">
+                <label for="rt-field-select" class="form-label mb-0">Canal (Real-time)</label>
+                <select id="rt-field-select" class="form-select"></select>
+              </div>
+            </div>
+          </div>
+
+          <div class="scrollable-table">
+            <table class="table mt-2">
+              <thead id="real-time-table-head"></thead>
+              <tbody id="real-time-table-body"></tbody>
+            </table>
+          </div>
+          <button type="button" id="download-real-time-data-button" class="btn btn-info mt-2 mb-2 full-width-button" disabled>Download – Tempo Real (CSV)</button>
+        </div>
+        <div class="col-md-4">
+          <h5 class="text-center">Titulação</h5>
+          <canvas id="experiment-chart"></canvas>
+          <div class="row g-2 mb-2 align-items-center mt-1">
+            <div class="col-md-8">
+              <div class="label-container">
+                <label for="volume" class="form-label mb-0">Volume de adição /µL</label>
+                <input type="number" id="volume" class="form-control" value="100" min="1" />
+              </div>
+            </div>
+            <div class="col-md-4">
+              <button type="button" id="add-experiment-data-button" class="btn btn-primary full-width-button">Start</button>
+            </div>
+          </div>
+          <div class="scrollable-table">
+            <table class="table mt-2">
+              <thead>
+                <tr><th>Hora</th><th>Leitura</th><th>Volume (µL)</th><th>pH</th><th>Temp (°C)</th></tr>
+              </thead>
+              <tbody id="experiment-table-body"></tbody>
+            </table>
+          </div>
+          <button type="button" id="download-experiment-data-button" class="btn btn-info mt-2 mb-2 full-width-button" disabled>Download – Titulação (CSV)</button>
+        </div>
+        <div class="col-md-3">
+          <h5 class="text-center">Derivada</h5>
+          <div class="derivative-chart-container">
+            <canvas id="derivative-chart"></canvas>
+          </div>
+          <button type="button" id="download-derivative-data-button" class="btn btn-info mt-2 mb-2 full-width-button" disabled>Download – Derivada (CSV)</button>
+        </div>
+      </div>
+
+      <footer class="text-bg-dark text-center py-1 mt-2">
+        <small>© 2025 LaQuA - UFV</small>
+      </footer>
+    </main>
+
+    <!-- Modal de instruções -->
+    <div id="instructions-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="instructions-title" style="display:none;">
+      <div class="modal-panel" role="document">
+        <header class="modal-header">
+          <h2 id="instructions-title">Instruções rápidas</h2>
+          <button id="close-instructions" class="btn btn-sm btn-outline-secondary" aria-label="Fechar instruções">×</button>
+        </header>
+        <div class="modal-body small">
+          <p><strong>Passos rápidos:</strong></p>
+          <ol>
+            <li>Conecte o instrumento à porta USB.</li>
+            <li>Selecione um perfil do instrumento ou carregue um arquivo <span class="mono">.json</span>.</li>
+            <li>Clique em <strong>Conectar</strong> para iniciar a leitura.</li>
+            <li>Para titulação: defina o volume de adição, clique em <strong>Start</strong> e utilize <strong>Add</strong> (atalho: Ctrl+Space).</li>
+          </ol>
+          <p class="mt-2">Dica: utilize o botão <em>Auto-export folder…</em> para configurar exportação automática de CSV.</p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      (function(){
+        const btnInst = document.getElementById('toggle-instructions');
+        const modal = document.getElementById('instructions-modal');
+        const closeBtn = document.getElementById('close-instructions');
+        let lastFocused = null;
+
+        function openModal(){
+          lastFocused = document.activeElement;
+          modal.style.display = 'flex';
+          modal.setAttribute('aria-hidden','false');
+          closeBtn.focus();
+          document.addEventListener('keydown', onKeyDown);
+        }
+
+        function closeModal(){
+          modal.setAttribute('aria-hidden','true');
+          setTimeout(()=>{ modal.style.display='none'; }, 220);
+          document.removeEventListener('keydown', onKeyDown);
+          if(lastFocused) lastFocused.focus();
+        }
+
+        function onKeyDown(e){
+          if(e.key === 'Escape') closeModal();
+          if(e.key === 'Tab'){
+            const focusable = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+            if(focusable.length === 0) return;
+            const first = focusable[0];
+            const last = focusable[focusable.length-1];
+            if(e.shiftKey && document.activeElement === first){ last.focus(); e.preventDefault(); }
+            else if(!e.shiftKey && document.activeElement === last){ first.focus(); e.preventDefault(); }
+          }
+        }
+
+        btnInst.addEventListener('click', (ev)=>{ ev.preventDefault(); openModal(); });
+        closeBtn.addEventListener('click', (ev)=>{ ev.preventDefault(); closeModal(); });
+        modal.addEventListener('click', (e)=>{ if(e.target === modal) closeModal(); });
+      })();
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+    <script src="app.js?v=20250902_merged" defer></script>
+  </body>
+</html>

@@ -48,6 +48,11 @@
   gap: .5rem; 
 }
 
+/* Melhorar espaçamento entre as duas linhas de controles */
+.row.g-2.mb-2.align-items-center {
+  margin-bottom: 1rem !important;
+}
+
 /* Configuração específica para o gráfico de derivada */
 #derivative-chart { 
   height: 300px !important; 
@@ -103,21 +108,23 @@ h5.text-center {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  max-width: 800px;
-  margin: 0.5rem auto;
-  padding: 0.25rem;
+  gap: 2rem;
+  max-width: 900px;
+  margin: 1rem auto;
+  padding: 0.5rem;
 }
 
 .brand-row .logo {
-  width: 48px;
+  width: 900px;
   height: auto;
+  max-height: 1000px;
+  object-fit: contain;
 }
 
 .brand-text {
   flex: 1 1 auto;
   text-align: center;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: 700;
   color: inherit;
 }
@@ -186,8 +193,8 @@ h5.text-center {
 }
 
 .brand-hero .logo {
-  width: 84px;
-  height: 84px;
+  width: 200px;
+  height: 150px;
   border-radius: 20px;
   box-shadow: 0 4px 14px rgba(0,0,0,.25);
 }
@@ -246,13 +253,18 @@ h5.text-center {
 }
 
 .interval-input {
-  flex: 1;
-  min-width: 60px;
+  flex: 0 0 70px; /* Espaço fixo para 4 dígitos */
+  min-width: 70px;
+  max-width: 70px;
+  text-align: center;
 }
 
 .interval-unit {
-  flex: 0 0 auto;
-  min-width: 60px;
+  flex: 0 0 65px; /* Aumentado para mostrar o texto da unidade */
+  min-width: 65px;
+  max-width: 65px;
+  font-size: 0.9rem;
+  padding: 0.375rem 0.25rem; /* Padding reduzido para economizar espaço */
 }
 
 .interval-warning {
@@ -269,16 +281,4 @@ canvas {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-/* Responsividade */
-@media (max-width: 480px) {
-  .brand-row {
-    gap: .5rem;
-    padding: .2rem;
-  }
-  .brand-row .logo {
-    width: 36px;
-  }
-  .brand-text {
-    font-size: 1rem;
-  }
-}
+/* Fim dos estilos - responsividade removida para uso desktop/laptop apenas */

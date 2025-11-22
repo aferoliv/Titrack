@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SeriAlpha — Plataforma de Aquisição Serial (inclui TitraTrack)</title>
+    <title>Titrack — Plataforma de Aquisição Serial - Titulação</title>
     <link rel="icon" type="image/svg+xml" href="serialpha.svg" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
     <link href="styles.css" rel="stylesheet" />
@@ -66,8 +66,9 @@
                 <div class="label-container">
                   <label for="read-interval-value" class="form-label mb-0" data-i18n="interval">Intervalo</label>
                   <div class="interval-group">
-                    <input type="number" id="read-interval-value" class="form-control interval-input" value="2" min="0.1" step="0.1" />
+                    <input type="number" id="read-interval-value" class="form-control interval-input" value="2" min="0.1" step="0.1" maxlength="4" />
                     <select id="read-interval-unit" class="form-select interval-unit">
+                      <option value="ms" data-i18n="milliseconds">ms</option>
                       <option value="s" selected data-i18n="seconds">s</option>
                       <option value="min" data-i18n="minutes">min</option>
                       <option value="h" data-i18n="hours">h</option>
@@ -133,40 +134,46 @@
       </div>
       <div class="row mb-2 g-2">
         <div class="col-md-5">
-          <h5 class="text-center">Leitura em Tempo Real</h5>
+          <h5 class="text-center" data-i18n="realTimeReading">Leitura em Tempo Real</h5>
           <canvas id="real-time-chart"></canvas>
+          <!-- Primeira linha: Pontos e Canal -->
           <div class="row g-2 mb-2 align-items-center mt-1">
-            <div class="col-md-4">
+            <div class="col-md-6">
               <div class="label-container">
-                <label for="max-points" class="form-label mb-0">Pontos no gráfico</label>
+                <label for="max-points" class="form-label mb-0" data-i18n="pointsInChart">Pontos no gráfico</label>
                 <input type="number" id="max-points" class="form-control" value="500" min="1" />
               </div>
             </div>
-            <!-- Controles de eixo Y (da Versão 2) -->
+            <div class="col-md-6">
+              <div class="label-container">
+                <label for="rt-field-select" class="form-label mb-0" data-i18n="channel">Canal (Real-time)</label>
+                <select id="rt-field-select" class="form-select"></select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Segunda linha: Controles de Y -->
+          <div class="row g-2 mb-2 align-items-center">
             <div class="col-md-3">
               <div class="label-container">
-                <label for="rt-y-min" class="form-label mb-0">Y min</label>
+                <label for="rt-y-min" class="form-label mb-0" data-i18n="yMin">Y min</label>
                 <input type="number" step="any" id="rt-y-min" class="form-control" placeholder="auto" />
               </div>
             </div>
             <div class="col-md-3">
               <div class="label-container">
-                <label for="rt-y-max" class="form-label mb-0">Y max</label>
+                <label for="rt-y-max" class="form-label mb-0" data-i18n="yMax">Y max</label>
                 <input type="number" step="any" id="rt-y-max" class="form-control" placeholder="auto" />
               </div>
             </div>
-            <div class="col-md-2">
-              <button type="button" id="clear-data-button" class="btn btn-danger full-width-button" disabled>Limpar dados</button>
-            </div>
-          </div>
-
-          <!-- Seletor de canal (da Versão 2) -->
-          <div class="row g-2 mb-2 align-items-center">
-            <div class="col-md-6">
-              <div class="label-container">
-                <label for="rt-field-select" class="form-label mb-0">Canal (Real-time)</label>
-                <select id="rt-field-select" class="form-select"></select>
+            <div class="col-md-3">
+              <div class="form-check mt-4">
+                <input class="form-check-input" type="checkbox" id="auto-y-scale" checked>
+                <label class="form-check-label small" for="auto-y-scale" data-i18n="autoScale">Auto Y</label>
               </div>
+            </div>
+            <div class="col-md-3">
+              <button type="button" id="clear-data-button" class="btn btn-danger full-width-button" data-i18n="clearData">Limpar dados</button>
             </div>
           </div>
 
@@ -176,38 +183,38 @@
               <tbody id="real-time-table-body"></tbody>
             </table>
           </div>
-          <button type="button" id="download-real-time-data-button" class="btn btn-info mt-2 mb-2 full-width-button" disabled>Download – Tempo Real (CSV)</button>
+          <button type="button" id="download-real-time-data-button" class="btn btn-info mt-2 mb-2 full-width-button" disabled data-i18n="downloadRealTime">Download – Tempo Real (CSV)</button>
         </div>
         <div class="col-md-4">
-          <h5 class="text-center">Titulação</h5>
+          <h5 class="text-center" data-i18n="titration">Titulação</h5>
           <canvas id="experiment-chart"></canvas>
           <div class="row g-2 mb-2 align-items-center mt-1">
             <div class="col-md-8">
               <div class="label-container">
-                <label for="volume" class="form-label mb-0">Volume de adição /µL</label>
+                <label for="volume" class="form-label mb-0" data-i18n="additionVolume">Volume de adição /µL</label>
                 <input type="number" id="volume" class="form-control" value="100" min="1" />
               </div>
             </div>
             <div class="col-md-4">
-              <button type="button" id="add-experiment-data-button" class="btn btn-primary full-width-button">Start</button>
+              <button type="button" id="add-experiment-data-button" class="btn btn-primary full-width-button" data-i18n="start">Start</button>
             </div>
           </div>
           <div class="scrollable-table">
             <table class="table mt-2">
-              <thead>
+              <thead id="experiment-table-head">
                 <tr><th>Hora</th><th>Leitura</th><th>Volume (µL)</th><th>pH</th><th>Temp (°C)</th></tr>
               </thead>
               <tbody id="experiment-table-body"></tbody>
             </table>
           </div>
-          <button type="button" id="download-experiment-data-button" class="btn btn-info mt-2 mb-2 full-width-button" disabled>Download – Titulação (CSV)</button>
+          <button type="button" id="download-experiment-data-button" class="btn btn-info mt-2 mb-2 full-width-button" disabled data-i18n="downloadTitration">Download – Titulação (CSV)</button>
         </div>
         <div class="col-md-3">
-          <h5 class="text-center">Derivada</h5>
+          <h5 class="text-center" data-i18n="derivative">Derivada</h5>
           <div class="derivative-chart-container">
             <canvas id="derivative-chart"></canvas>
           </div>
-          <button type="button" id="download-derivative-data-button" class="btn btn-info mt-2 mb-2 full-width-button" disabled>Download – Derivada (CSV)</button>
+          <button type="button" id="download-derivative-data-button" class="btn btn-info mt-2 mb-2 full-width-button" disabled data-i18n="downloadDerivative">Download – Derivada (CSV)</button>
         </div>
       </div>
 
